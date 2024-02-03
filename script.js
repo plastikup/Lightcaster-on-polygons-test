@@ -368,34 +368,47 @@ class RandomBall {
 			if (Math.sqrt((poly.x - this.x) ** 2 + (poly.y - this.y) ** 2) > canvasSize / 10) continue;
 
 			for (const vertex of poly.vertexes) {
-				// do the math!
 				const x1 = vertex.x;
 				const y1 = vertex.y;
-				const x2 = vertex.tree.nextChild.x;
-				const y2 = vertex.tree.nextChild.y;
-
-				const distX = x2 - x1;
-				const distY = y2 - y1;
-				const norm = Math.sqrt(distX ** 2 + distY ** 2);
-				const dotProd = ((this.x - x1) * distX + (this.y - y1) * distY) / norm ** 2;
-
-				const closestX = x1 + dotProd * distX;
-				const closestY = y1 + dotProd * distY;
-
-				// skip if closest point is outside the boundary of line segment
-				if (Math.sign(closestX - x1) === Math.sign(closestX - x2) || Math.sign(closestY - y1) === Math.sign(closestY - y2)) continue;
-				// check if the distance to the closest point is under the radius of the ball
-				if (Math.sqrt((closestX - this.x) ** 2 + (closestY - this.y) ** 2) < 4) {
-					const surfaceAngle = Math.atan2(y2 - y1, x2 - x1);
+				if (Math.sqrt((x1 - this.x) ** 2 + (y1 - this.y) ** 2) < 4) {
+					// vertex-ball collision
+					const surfaceAngle = Math.atan2(this.y - y1, this.x - x1) + Math.PI / 2;
 					const incidentAngle = Math.atan2(this.vy, this.vx);
 					const resultingAngle = surfaceAngle * 2 - incidentAngle;
 
 					this.vx = Math.cos(resultingAngle);
 					this.vy = Math.sin(resultingAngle);
 
-					const a = Math.atan2(this.y - closestY, this.x - closestX);
-					this.x = closestX + 4 * Math.cos(a);
-					this.y = closestY + 4 * Math.sin(a);
+					this.x = x1 + 4 * Math.cos(surfaceAngle - Math.PI / 2);
+					this.y = y1 + 4 * Math.sin(surfaceAngle - Math.PI / 2);
+				} else {
+					// segment-ball collision
+					const x2 = vertex.tree.nextChild.x;
+					const y2 = vertex.tree.nextChild.y;
+
+					const distX = x2 - x1;
+					const distY = y2 - y1;
+					const norm = Math.sqrt(distX ** 2 + distY ** 2);
+					const dotProd = ((this.x - x1) * distX + (this.y - y1) * distY) / norm ** 2;
+
+					const closestX = x1 + dotProd * distX;
+					const closestY = y1 + dotProd * distY;
+
+					// skip if closest point is outside the boundary of line segment
+					if (Math.sign(closestX - x1) === Math.sign(closestX - x2) || Math.sign(closestY - y1) === Math.sign(closestY - y2)) continue;
+					// check if the distance to the closest point is under the radius of the ball
+					if (Math.sqrt((closestX - this.x) ** 2 + (closestY - this.y) ** 2) < 4) {
+						const surfaceAngle = Math.atan2(y2 - y1, x2 - x1);
+						const incidentAngle = Math.atan2(this.vy, this.vx);
+						const resultingAngle = surfaceAngle * 2 - incidentAngle;
+
+						this.vx = Math.cos(resultingAngle);
+						this.vy = Math.sin(resultingAngle);
+
+						const a = Math.atan2(this.y - closestY, this.x - closestX);
+						this.x = closestX + 4 * Math.cos(a);
+						this.y = closestY + 4 * Math.sin(a);
+					}
 				}
 			}
 		}
