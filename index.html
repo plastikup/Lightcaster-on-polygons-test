@@ -19,8 +19,7 @@
 				display: flex;
 				width: 100vw;
 				height: 100vh;
-				align-content: center;
-				flex-wrap: wrap;
+				flex-wrap: nowrap;
 				justify-content: space-between;
 			}
 
@@ -45,9 +44,11 @@
 				width: calc(100vmin - 32px);
 				height: calc(100vmin - 32px);
 			}
-			#canvas-container.panel-opened {
-				width: calc(min(100vw - 250px - 32px, 100vh - 32px)) !important;
-				height: calc(min(100vw - 250px - 32px, 100vh - 32px)) !important;
+			@media only screen and (min-width: 600px) {
+				#canvas-container.panel-opened {
+					width: calc(min(100vw - 250px - 32px, 100vh - 32px)) !important;
+					height: calc(min(100vw - 250px - 32px, 100vh - 32px)) !important;
+				}
 			}
 
 			/* right panel */
@@ -57,7 +58,6 @@
 				width: 0px;
 				height: 90vh;
 				border-radius: 15px 0 0 15px;
-				opacity: 0.8;
 
 				background: linear-gradient(150deg, lightcoral, 80%, cornflowerblue);
 			}
@@ -90,10 +90,31 @@
 			#hdb_target {
 				padding: 10px;
 			}
+
+			@media only screen and (max-width: 600px) {
+				body {
+					justify-content: center;
+				}
+				#spatial-separator {
+					display: none;
+				}
+
+				#panel-wrapper {
+					position: absolute;
+					left: 100%;
+					top: 50%;
+					transform: translateY(-50%);
+
+					opacity: 0.95;
+				}
+				#panel-wrapper.panel-opened {
+					transform: translate(-100%, -50%);
+				}
+			}
 		</style>
 	</head>
 	<body>
-		<section></section>
+		<section id="spatial-separator"></section>
 		<section id="canvas-container" class="panel-opened" data-toggleable="panel">
 			<canvas id="shadowing"></canvas>
 			<canvas id="main"></canvas>

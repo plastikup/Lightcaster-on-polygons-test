@@ -42,6 +42,8 @@ shadowingCtx.lineWidth = canvasSize / 400;
 const mouse = [canvasCenter, canvasCenter];
 document.addEventListener('pointermove', (event) => {
 	if (event.target.nodeName === 'CANVAS') {
+		event.preventDefault();
+
 		mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
 		mouse[1] = event.offsetY * (canvasSize / parseInt(mainCanvas.offsetHeight, 10));
 	}
