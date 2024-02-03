@@ -40,13 +40,13 @@ shadowingCtx.lineWidth = canvasSize / 400;
 
 /* start of script */
 const mouse = [canvasCenter, canvasCenter];
-document.addEventListener('mousemove', (event) => {
+document.addEventListener('pointermove', (event) => {
 	if (event.target.nodeName === 'CANVAS') {
 		mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
 		mouse[1] = event.offsetY * (canvasSize / parseInt(mainCanvas.offsetHeight, 10));
 	}
 });
-document.addEventListener('mousedown', (event) => {
+document.addEventListener('pointerdown', (event) => {
 	if (event.target.nodeName === 'CANVAS') {
 		event.preventDefault();
 
@@ -57,7 +57,7 @@ document.addEventListener('mousedown', (event) => {
 });
 
 function drawMouse() {
-	mainCtx.fillStyle = '#ff0';
+	mainCtx.fillStyle = '#fff';
 	mainCtx.beginPath();
 	mainCtx.arc(...mouse, 4, 0, 2 * Math.PI);
 	mainCtx.fill();
@@ -365,7 +365,7 @@ class RandomBall {
 	}
 
 	draw() {
-		mainCtx.fillStyle = '#ff9';
+		mainCtx.fillStyle = '#ff0';
 		mainCtx.beginPath();
 		mainCtx.arc(this.x, this.y, 4, 0, 2 * Math.PI);
 		mainCtx.fill();
