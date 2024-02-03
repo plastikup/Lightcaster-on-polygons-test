@@ -47,8 +47,9 @@ class RandomPolygon {
 		this.ox = x;
 		this.oy = y;
 		this.a = 0;
-		this.vx = Math.random() * 0.5 - 0.25;
-		this.vy = Math.random() * 0.5 - 0.25;
+		const theta = Math.random() * 2 * Math.PI;
+		this.vx = 0.2 * Math.cos(theta);
+		this.vy = 0.2 * Math.sin(theta);
 		this.ma = Math.random() * 0.008 - 0.004;
 		this.polygonId = RandomPolygon.idCount++;
 
@@ -80,8 +81,8 @@ class RandomPolygon {
 		this.x += this.vx;
 		this.y += this.vy;
 		this.a += this.ma;
-		this.gridX = Math.floor(this.x / (canvasSize / 10));
-		this.gridY = Math.floor(this.y / (canvasSize / 10));
+		this.gridX = Math.max(Math.min(Math.floor(this.x / (canvasSize / 10)), 0), 9);
+		this.gridY = Math.max(Math.min(Math.floor(this.y / (canvasSize / 10)), 0), 9);
 		polygonGridded[this.gridY][this.gridX].push(this);
 
 		// compile a list of nearby polygons
@@ -120,18 +121,17 @@ class RandomPolygon {
 				const angleToPoly = Math.atan2(randomPolygon.y - this.y, randomPolygon.x - this.x);
 				randomPolygon.x += Math.cos(angleToPoly);
 				randomPolygon.y += Math.sin(angleToPoly);
-				this.x += Math.cos(angleToPoly + Math.PI);
-				this.y += Math.sin(angleToPoly + Math.PI);
+				this.x += 0.05 * Math.cos(angleToPoly + Math.PI);
+				this.y += 0.05 * Math.sin(angleToPoly + Math.PI);
 			};
 			// execute collision on each polygon
 			for (const polygonCollisions of polygonCollisionDefiniteList) {
 				if (polygonCollisions.length > 2) {
 					// three colliding points or more
 					repeal(polygonCollisions);
-					////console.log('Polygons collision has more than 2 colliding points; repeal code is running.');
 				} else if (polygonCollisions.length === 1) {
 					// one colliding point
-					////console.log('one colliding point');
+					repeal(polygonCollisions);
 				} else {
 					// find the common vertex for collisions that imply two polygon segments
 					const findCommonVertexXY = (vertex1, vertex2) => {
@@ -139,7 +139,7 @@ class RandomPolygon {
 						else if (vertex2.tree.nextChild === vertex1) return [vertex1.x, vertex1.y];
 						else {
 							repeal(polygonCollisions);
-							console.error('Common vertex not found; repeal code is running.');
+							console.warn('Common vertex not found; repeal code is running.');
 							return [null, null];
 						}
 					};
@@ -151,9 +151,9 @@ class RandomPolygon {
 					 * B: one segment of this polygon is colliding with two segments of the other polygon (inverse of A)
 					 * C: two segments of this polygon are colliding with two other segments of the other polygon
 					 */
+					const randomPolygon = polygonCollisions[0].poly;
 					let keyVertex1x, keyVertex1y, keyVertex2x, keyVertex2y;
 					if (polygonCollisions[0].thisVertex !== polygonCollisions[1].thisVertex && polygonCollisions[0].otherVertex !== polygonCollisions[1].otherVertex) {
-						// C
 						[keyVertex1x, keyVertex1y] = findCommonVertexXY(polygonCollisions[0].thisVertex, polygonCollisions[1].thisVertex);
 						[keyVertex2x, keyVertex2y] = findCommonVertexXY(polygonCollisions[0].otherVertex, polygonCollisions[1].otherVertex);
 					} else if (polygonCollisions[0].thisVertex !== polygonCollisions[1].thisVertex) {
@@ -167,11 +167,23 @@ class RandomPolygon {
 					}
 
 					if (keyVertex1x === null || keyVertex2x === null) continue;
-					ctx.fillStyle = '#f0f9';
-					ctx.beginPath();
-					ctx.arc(keyVertex1x, keyVertex1y, 4, 0, 2 * Math.PI);
-					ctx.arc(keyVertex2x, keyVertex2y, 4, 0, 2 * Math.PI);
-					ctx.fill();
+
+					const surfaceAngle = Math.atan2(polygonCollisions[1].py - polygonCollisions[0].py, polygonCollisions[1].px - polygonCollisions[0].px);
+					const incidentAngle1 = Math.atan2(this.vy, this.vx);
+					const resultingAngle1 = surfaceAngle * 2 - incidentAngle1;
+					this.vx = 0.2 * Math.cos(resultingAngle1);
+					this.vy = 0.2 * Math.sin(resultingAngle1);
+					const incidentAngle2 = Math.atan2(randomPolygon.vy, randomPolygon.vx);
+					const resultingAngle2 = surfaceAngle * 2 - incidentAngle2;
+					randomPolygon.vx = 0.2 * Math.cos(resultingAngle2);
+					randomPolygon.vy = 0.2 * Math.sin(resultingAngle2);
+
+					const halfDistance = Math.min(Math.sqrt((keyVertex2x - keyVertex1x) ** 2 + (keyVertex2y - keyVertex1y) ** 2) / 2, canvasSize / 25);
+					const angleToOtherVertex = Math.atan2(keyVertex2y - keyVertex1y, keyVertex2x - keyVertex1x);
+					this.x += halfDistance * Math.cos(angleToOtherVertex);
+					this.y += halfDistance * Math.sin(angleToOtherVertex);
+					randomPolygon.x += halfDistance * Math.cos(angleToOtherVertex + Math.PI);
+					randomPolygon.y += halfDistance * Math.sin(angleToOtherVertex + Math.PI);
 				}
 			}
 		}
@@ -179,7 +191,6 @@ class RandomPolygon {
 }
 
 const vertexList = [];
-const isBetweenRange = (input, u, v) => input >= Math.min(u, v) && input < Math.max(u, v);
 class RandomVertex {
 	constructor(minA, maxA, parent) {
 		const polyMinRadius = canvasSize / 40;
@@ -230,6 +241,7 @@ class RandomVertex {
 			}
 		}
 
+		const isBetweenRange = (input, u, v) => input >= Math.min(u, v) && input <= Math.max(u, v);
 		//* vertex-vertex collision
 		const polygonCollisionDefiniteList = [];
 		const x1 = this.x;
@@ -256,11 +268,6 @@ class RandomVertex {
 				const py = m1 * px + b1;
 
 				if (isBetweenRange(px, x1, x2) && isBetweenRange(px, x3, x4) && isBetweenRange(py, y1, y2) && isBetweenRange(py, y3, y4)) {
-					ctx.fillStyle = '#ff0';
-					ctx.beginPath();
-					ctx.arc(px, py, 4, 0, 2 * Math.PI);
-					ctx.fill();
-
 					polygonCollisionDefiniteList.push({
 						poly: poly,
 						thisVertex: this,
@@ -276,24 +283,6 @@ class RandomVertex {
 						x4: x4,
 						y4: y4,
 					});
-
-					/*
-					const surfaceAngle = Math.atan2(y4 - y3, x4 - x3);
-					const incidentAngle1 = Math.atan2(this.tree.parent.vy, this.tree.parent.vx);
-					const resultingAngle1 = surfaceAngle * 2 - incidentAngle1;
-					const incidentAngle2 = Math.atan2(poly.vy, poly.vx);
-					const resultingAngle2 = surfaceAngle * 2 - incidentAngle2;
-
-					this.tree.parent.vx = Math.cos(resultingAngle1);
-					this.tree.parent.vy = Math.sin(resultingAngle1);
-					poly.vx = Math.cos(resultingAngle2);
-					poly.vy = Math.sin(resultingAngle2);
-
-					//this.tree.parent.x += this.tree.parent.vx;
-					//this.tree.parent.y += this.tree.parent.vy;
-					//poly.x += poly.vx;
-					//poly.y += poly.vy;
-					*/
 				}
 			}
 		}
@@ -373,7 +362,7 @@ function main() {
 	ctx.clearRect(0, 0, canvasSize, canvasSize);
 	polygonGridded = deepCopyPolygonGridded();
 
-	if (polygonList.length < 6) {
+	if (polygonList.length < 20) {
 		polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
 	}
 	for (const poly of polygonList) {
