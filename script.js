@@ -1,43 +1,52 @@
 'use strict';
-const canvas = document.querySelector('canvas');
+const mainCanvas = document.getElementById('main');
+const shadowingCanvas = document.getElementById('shadowing');
 
 const canvasSize = Math.min(innerWidth, innerHeight) - 16;
 const canvasCenter = canvasSize / 2;
 const canvasScaleFactor = 2;
 
-canvas.style.width = canvasSize + 'px';
-canvas.style.height = canvasSize + 'px';
-canvas.width = canvasSize * canvasScaleFactor;
-canvas.height = canvasSize * canvasScaleFactor;
+mainCanvas.style.width = canvasSize + 'px';
+mainCanvas.style.height = canvasSize + 'px';
+mainCanvas.width = canvasSize * canvasScaleFactor;
+mainCanvas.height = canvasSize * canvasScaleFactor;
+shadowingCanvas.style.width = canvasSize + 'px';
+shadowingCanvas.style.height = canvasSize + 'px';
+shadowingCanvas.width = canvasSize * canvasScaleFactor;
+shadowingCanvas.height = canvasSize * canvasScaleFactor;
 
-const ctx = canvas.getContext('2d', { alpha: false });
-ctx.scale(canvasScaleFactor, canvasScaleFactor);
-ctx.lineWidth = canvasSize / 400;
+const mainCtx = mainCanvas.getContext('2d');
+mainCtx.scale(canvasScaleFactor, canvasScaleFactor);
+mainCtx.lineWidth = canvasSize / 400;
+
+const shadowingCtx = shadowingCanvas.getContext('2d');
+shadowingCtx.scale(canvasScaleFactor, canvasScaleFactor);
+shadowingCtx.lineWidth = canvasSize / 400;
 
 /* start of script */
 const mouse = [canvasCenter, canvasCenter];
-canvas.addEventListener('mousemove', (event) => {
+document.addEventListener('mousemove', (event) => {
 	mouse[0] = event.offsetX;
 	mouse[1] = event.offsetY;
 });
-canvas.addEventListener('mousedown', () => {
-	for (let i = 0; i < 10; i++) {
+document.addEventListener('mousedown', () => {
+	for (let i = 0; i < Math.min(400 - ballList.length, 4); i++) {
 		ballList.push(new RandomBall());
 	}
 });
 
 function drawMouse() {
-	ctx.fillStyle = '#ff0';
-	ctx.beginPath();
-	ctx.arc(...mouse, 4, 0, 2 * Math.PI);
-	ctx.fill();
+	mainCtx.fillStyle = '#ff0';
+	mainCtx.beginPath();
+	mainCtx.arc(...mouse, 4, 0, 2 * Math.PI);
+	mainCtx.fill();
 
-	const light = ctx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
+	const light = shadowingCtx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
 	light.addColorStop(0, '#990');
 	light.addColorStop(1, '#000');
-	ctx.fillStyle = light;
-	ctx.arc(...mouse, canvasSize, 0, 2 * Math.PI);
-	ctx.fill();
+	shadowingCtx.fillStyle = light;
+	shadowingCtx.arc(...mouse, canvasSize, 0, 2 * Math.PI);
+	shadowingCtx.fill();
 }
 
 const polygonGriddedOriginal = Object.fromEntries([...Array(12)].map(() => Object.fromEntries([...Array(12)].map(() => []).map((value, index) => [index - 1, value]))).map((value, index) => [index - 1, value]));
@@ -77,13 +86,13 @@ class RandomPolygon {
 			vertex.shadow();
 		}
 
-		ctx.strokeStyle = '#ddf';
-		ctx.beginPath();
-		ctx.moveTo(this.vertexes[this.vertexes.length - 1].x, this.vertexes[this.vertexes.length - 1].y);
+		mainCtx.strokeStyle = '#ddf';
+		mainCtx.beginPath();
+		mainCtx.moveTo(this.vertexes[this.vertexes.length - 1].x, this.vertexes[this.vertexes.length - 1].y);
 		for (const vertex of this.vertexes) {
-			ctx.lineTo(vertex.x, vertex.y);
+			mainCtx.lineTo(vertex.x, vertex.y);
 		}
-		ctx.stroke();
+		mainCtx.stroke();
 	}
 
 	update() {
@@ -233,14 +242,14 @@ class RandomVertex {
 		const nextChildX = this.tree.nextChild.x;
 		const nextChildY = this.tree.nextChild.y;
 
-		ctx.fillStyle = '#111D';
-		ctx.beginPath();
-		ctx.moveTo(this.x, this.y);
-		ctx.lineTo(nextChildX, nextChildY);
-		ctx.lineTo(nextChildX + (nextChildX - mouse[0]) * vectorMultiplier, nextChildY + (nextChildY - mouse[1]) * vectorMultiplier);
-		ctx.lineTo(this.x + (this.x - mouse[0]) * vectorMultiplier, this.y + (this.y - mouse[1]) * vectorMultiplier);
-		ctx.closePath();
-		ctx.fill();
+		shadowingCtx.fillStyle = '#111a';
+		shadowingCtx.beginPath();
+		shadowingCtx.moveTo(this.x, this.y);
+		shadowingCtx.lineTo(nextChildX, nextChildY);
+		shadowingCtx.lineTo(nextChildX + (nextChildX - mouse[0]) * vectorMultiplier, nextChildY + (nextChildY - mouse[1]) * vectorMultiplier);
+		shadowingCtx.lineTo(this.x + (this.x - mouse[0]) * vectorMultiplier, this.y + (this.y - mouse[1]) * vectorMultiplier);
+		shadowingCtx.closePath();
+		shadowingCtx.fill();
 	}
 
 	update() {
@@ -337,10 +346,10 @@ class RandomBall {
 	}
 
 	draw() {
-		ctx.fillStyle = '#ff0';
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, 4, 0, 2 * Math.PI);
-		ctx.fill();
+		mainCtx.fillStyle = '#ff0';
+		mainCtx.beginPath();
+		mainCtx.arc(this.x, this.y, 4, 0, 2 * Math.PI);
+		mainCtx.fill();
 	}
 
 	update() {
@@ -394,7 +403,7 @@ class RandomBall {
 }
 
 function main() {
-	ctx.clearRect(0, 0, canvasSize, canvasSize);
+	mainCtx.clearRect(0, 0, canvasSize, canvasSize);
 	polygonGridded = deepCopyPolygonGridded();
 
 	if (polygonList.length < 20) {
