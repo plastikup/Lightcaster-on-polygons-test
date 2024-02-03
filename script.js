@@ -25,10 +25,18 @@ canvas.addEventListener('mousedown', () => {
 		ballList.push(new RandomBall());
 	}
 });
+
 function drawMouse() {
 	ctx.fillStyle = '#ff0';
 	ctx.beginPath();
 	ctx.arc(...mouse, 4, 0, 2 * Math.PI);
+	ctx.fill();
+
+	const light = ctx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
+	light.addColorStop(0, '#990');
+	light.addColorStop(1, '#000');
+	ctx.fillStyle = light;
+	ctx.arc(...mouse, canvasSize, 0, 2 * Math.PI);
 	ctx.fill();
 }
 
@@ -37,7 +45,7 @@ const deepCopyPolygonGridded = () => JSON.parse(JSON.stringify(polygonGriddedOri
 let polygonGridded = deepCopyPolygonGridded();
 console.log(polygonGridded);
 
-const polygonList = [];
+let polygonList = [];
 class RandomPolygon {
 	static idCount = 0;
 	constructor(x, y) {
@@ -65,6 +73,10 @@ class RandomPolygon {
 	}
 
 	draw() {
+		for (const vertex of this.vertexes) {
+			vertex.shadow();
+		}
+
 		ctx.strokeStyle = '#ddf';
 		ctx.beginPath();
 		ctx.moveTo(this.vertexes[this.vertexes.length - 1].x, this.vertexes[this.vertexes.length - 1].y);
@@ -212,6 +224,23 @@ class RandomVertex {
 		};
 
 		vertexList.push(this);
+	}
+
+	shadow() {
+		const distanceToPointer = Math.sqrt((mouse[0] - this.x) ** 2 + (mouse[1] - this.y) ** 2);
+		const vectorMultiplier = (5 * canvasSize) / distanceToPointer;
+
+		const nextChildX = this.tree.nextChild.x;
+		const nextChildY = this.tree.nextChild.y;
+
+		ctx.fillStyle = '#111D';
+		ctx.beginPath();
+		ctx.moveTo(this.x, this.y);
+		ctx.lineTo(nextChildX, nextChildY);
+		ctx.lineTo(nextChildX + (nextChildX - mouse[0]) * vectorMultiplier, nextChildY + (nextChildY - mouse[1]) * vectorMultiplier);
+		ctx.lineTo(this.x + (this.x - mouse[0]) * vectorMultiplier, this.y + (this.y - mouse[1]) * vectorMultiplier);
+		ctx.closePath();
+		ctx.fill();
 	}
 
 	update() {
@@ -371,7 +400,8 @@ function main() {
 	if (polygonList.length < 20) {
 		polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
 	}
-	
+
+	drawMouse();
 	for (const poly of polygonList) {
 		poly.draw();
 		poly.update();
@@ -381,7 +411,6 @@ function main() {
 		ball.update();
 		ball.collide();
 	}
-	drawMouse();
 
 	requestAnimationFrame(main);
 }
