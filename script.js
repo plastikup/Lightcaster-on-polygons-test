@@ -40,21 +40,21 @@ shadowingCtx.lineWidth = canvasSize / 400;
 
 /* start of script */
 const mouse = [canvasCenter, canvasCenter];
+function saveMousePosition(event) {
+	mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
+	mouse[1] = event.offsetY * (canvasSize / parseInt(mainCanvas.offsetHeight, 10));
+}
 document.addEventListener('pointermove', (event) => {
 	if (event.target.nodeName === 'CANVAS') {
 		event.preventDefault();
-
-		mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
-		mouse[1] = event.offsetY * (canvasSize / parseInt(mainCanvas.offsetHeight, 10));
+		saveMousePosition(event);
 	}
 });
 document.addEventListener('pointerdown', (event) => {
 	if (event.target.nodeName === 'CANVAS') {
 		event.preventDefault();
-
-		for (let i = 0; i < Math.min(400 - ballList.length, 4); i++) {
-			ballList.push(new RandomBall());
-		}
+		saveMousePosition(event);
+		ballList.push(new RandomBall(), new RandomBall());
 	}
 });
 
