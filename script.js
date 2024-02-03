@@ -114,38 +114,64 @@ class RandomPolygon {
 				return accumulator;
 			}, []);
 
+			// repeal code for unhandled collisions
+			const repeal = (polygonCollisions) => {
+				const randomPolygon = polygonCollisions[0].poly;
+				const angleToPoly = Math.atan2(randomPolygon.y - this.y, randomPolygon.x - this.x);
+				randomPolygon.x += Math.cos(angleToPoly);
+				randomPolygon.y += Math.sin(angleToPoly);
+				this.x += Math.cos(angleToPoly + Math.PI);
+				this.y += Math.sin(angleToPoly + Math.PI);
+			};
 			// execute collision on each polygon
-			for (const polygonCollisionClass of polygonCollisionDefiniteList) {
-				if (polygonCollisionClass.length > 2) {
+			for (const polygonCollisions of polygonCollisionDefiniteList) {
+				if (polygonCollisions.length > 2) {
 					// three colliding points or more
-					const randomPolygon = polygonCollisionClass[0].poly;
-					const angleToPoly = Math.atan2(randomPolygon.y - this.y, randomPolygon.x - this.x);
-					randomPolygon.x += Math.cos(angleToPoly);
-					randomPolygon.y += Math.sin(angleToPoly);
-					this.x += Math.cos(angleToPoly + Math.PI);
-					this.y += Math.sin(angleToPoly + Math.PI);
-					console.log('Polygons collision has more than 2 colliding points; collision code has thus been skipped, repeal code is running.');
-				} else if (polygonCollisionClass.length === 1) {
+					repeal(polygonCollisions);
+					////console.log('Polygons collision has more than 2 colliding points; repeal code is running.');
+				} else if (polygonCollisions.length === 1) {
 					// one colliding point
-					console.log('one colliding point');
+					////console.log('one colliding point');
 				} else {
+					// find the common vertex for collisions that imply two polygon segments
+					const findCommonVertexXY = (vertex1, vertex2) => {
+						if (vertex1.tree.nextChild === vertex2) return [vertex2.x, vertex2.y];
+						else if (vertex2.tree.nextChild === vertex1) return [vertex1.x, vertex1.y];
+						else {
+							repeal(polygonCollisions);
+							console.error('Common vertex not found; repeal code is running.');
+							return [null, null];
+						}
+					};
+					const findMiddlePointXY = (px1, py1, px2, py2) => [(px1 + px2) / 2, (py1 + py2) / 2];
+
 					/**
 					 * * break down collision into case A, B or C:
-					 * A: two vertexes of this polygon are colliding with one single vertex of the other polygon
-					 * B: one vertex of this polygon is colliding with two vertexes of the other polygon (inverse of A)
-					 * C: two vertexes of this polygon are colliding with two other vertexes of the other polygon
+					 * A: two segments of this polygon are colliding with one single segment of the other polygon
+					 * B: one segment of this polygon is colliding with two segments of the other polygon (inverse of A)
+					 * C: two segments of this polygon are colliding with two other segments of the other polygon
 					 */
-
-					if (polygonCollisionClass[0].thisVertex !== polygonCollisionClass[1].thisVertex && polygonCollisionClass[0].otherVertex !== polygonCollisionClass[1].otherVertex) {
+					let keyVertex1x, keyVertex1y, keyVertex2x, keyVertex2y;
+					if (polygonCollisions[0].thisVertex !== polygonCollisions[1].thisVertex && polygonCollisions[0].otherVertex !== polygonCollisions[1].otherVertex) {
 						// C
-						console.log('case C', this.polygonId);
-					} else if (polygonCollisionClass[0].thisVertex !== polygonCollisionClass[1].thisVertex) {
+						[keyVertex1x, keyVertex1y] = findCommonVertexXY(polygonCollisions[0].thisVertex, polygonCollisions[1].thisVertex);
+						[keyVertex2x, keyVertex2y] = findCommonVertexXY(polygonCollisions[0].otherVertex, polygonCollisions[1].otherVertex);
+					} else if (polygonCollisions[0].thisVertex !== polygonCollisions[1].thisVertex) {
 						// A
-						console.log('case A', this.polygonId);
+						[keyVertex1x, keyVertex1y] = findCommonVertexXY(polygonCollisions[0].thisVertex, polygonCollisions[1].thisVertex);
+						[keyVertex2x, keyVertex2y] = findMiddlePointXY(polygonCollisions[0].px, polygonCollisions[0].py, polygonCollisions[1].px, polygonCollisions[1].py);
 					} else {
 						// B
-						console.log('case B', this.polygonId);
+						[keyVertex1x, keyVertex1y] = findMiddlePointXY(polygonCollisions[0].px, polygonCollisions[0].py, polygonCollisions[1].px, polygonCollisions[1].py);
+						[keyVertex2x, keyVertex2y] = findCommonVertexXY(polygonCollisions[0].otherVertex, polygonCollisions[1].otherVertex);
 					}
+
+					if (keyVertex1x === null || keyVertex2x === null) continue;
+					ctx.fillStyle = '#f0f9';
+					ctx.beginPath();
+					ctx.arc(keyVertex1x, keyVertex1y, 4, 0, 2 * Math.PI);
+					ctx.arc(keyVertex2x, keyVertex2y, 4, 0, 2 * Math.PI);
+					ctx.fill();
 				}
 			}
 		}
@@ -230,6 +256,7 @@ class RandomVertex {
 				const py = m1 * px + b1;
 
 				if (isBetweenRange(px, x1, x2) && isBetweenRange(px, x3, x4) && isBetweenRange(py, y1, y2) && isBetweenRange(py, y3, y4)) {
+					ctx.fillStyle = '#ff0';
 					ctx.beginPath();
 					ctx.arc(px, py, 4, 0, 2 * Math.PI);
 					ctx.fill();
@@ -288,6 +315,7 @@ class RandomBall {
 	}
 
 	draw() {
+		ctx.fillStyle = '#ff0';
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, 4, 0, 2 * Math.PI);
 		ctx.fill();
@@ -345,7 +373,7 @@ function main() {
 	ctx.clearRect(0, 0, canvasSize, canvasSize);
 	polygonGridded = deepCopyPolygonGridded();
 
-	if (polygonList.length < 5) {
+	if (polygonList.length < 6) {
 		polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
 	}
 	for (const poly of polygonList) {
