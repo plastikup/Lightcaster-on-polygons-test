@@ -1,5 +1,9 @@
 'use strict';
 
+/* ~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~ HANDLEBARS.JS ~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~ */
+
 const hdb_target = document.getElementById('hdb_target');
 const hdb_source = document.getElementById('hdb_source').innerHTML;
 function compileHandlebars() {
@@ -7,6 +11,11 @@ function compileHandlebars() {
 	const hdb_compiler = Handlebars.compile(hdb_source);
 	hdb_target.innerHTML = hdb_compiler({ number: 7 });
 }
+compileHandlebars();
+
+/* ~~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~~~~~ CANVAS ~~~~~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* ctx initialization */
 const mainCanvas = document.getElementById('main');
@@ -16,12 +25,8 @@ const canvasSize = Math.min(innerWidth, innerHeight) - 16;
 const canvasCenter = canvasSize / 2;
 const canvasScaleFactor = 2;
 
-mainCanvas.style.width = canvasSize + 'px';
-mainCanvas.style.height = canvasSize + 'px';
 mainCanvas.width = canvasSize * canvasScaleFactor;
 mainCanvas.height = canvasSize * canvasScaleFactor;
-shadowingCanvas.style.width = canvasSize + 'px';
-shadowingCanvas.style.height = canvasSize + 'px';
 shadowingCanvas.width = canvasSize * canvasScaleFactor;
 shadowingCanvas.height = canvasSize * canvasScaleFactor;
 
@@ -36,12 +41,18 @@ shadowingCtx.lineWidth = canvasSize / 400;
 /* start of script */
 const mouse = [canvasCenter, canvasCenter];
 document.addEventListener('mousemove', (event) => {
-	mouse[0] = event.offsetX;
-	mouse[1] = event.offsetY;
+	if (event.target.nodeName === 'CANVAS') {
+		mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
+		mouse[1] = event.offsetY * (canvasSize / parseInt(mainCanvas.offsetHeight, 10));
+	}
 });
-document.addEventListener('mousedown', () => {
-	for (let i = 0; i < Math.min(400 - ballList.length, 4); i++) {
-		ballList.push(new RandomBall());
+document.addEventListener('mousedown', (event) => {
+	if (event.target.nodeName === 'CANVAS') {
+		event.preventDefault();
+
+		for (let i = 0; i < Math.min(400 - ballList.length, 4); i++) {
+			ballList.push(new RandomBall());
+		}
 	}
 });
 

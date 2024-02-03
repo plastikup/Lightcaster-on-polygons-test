@@ -4,27 +4,126 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>physics test</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<style>
+			* {
+				transition-duration: 100ms;
+			}
 			body {
 				margin: 0;
 				overflow: hidden;
 				background-color: black;
+
+				font-size: 18px;
+
+				display: flex;
+				width: 100vw;
+				height: 100vh;
+				align-content: center;
+				flex-wrap: wrap;
+				justify-content: space-between;
 			}
+
+			/* canvas */
 			canvas {
-				border: 1px solid white;
+				border: 0.5px solid white;
 
 				position: absolute;
+				top: 0;
+				left: 0;
+
+				width: 100%;
+				height: 100%;
+			}
+
+			section {
+				margin: auto 0;
+			}
+			#canvas-container {
+				position: relative;
+
+				width: calc(100vmin - 16px);
+				height: calc(100vmin - 16px);
+			}
+			#canvas-container.panel-opened {
+				width: calc(min(100vw - 250px - 16px, 100vh - 16px)) !important;
+				height: calc(min(100vw - 250px - 16px, 100vh - 16px)) !important;
+			}
+
+			/* right panel */
+			#panel-wrapper {
+				position: relative;
+
+				width: 0px;
+				height: 90vh;
+				border-radius: 15px 0 0 15px;
+
+				background: linear-gradient(150deg, lightcoral, 80%, cornflowerblue);
+			}
+			#panel-wrapper.panel-opened {
+				width: 250px;
+			}
+			#toggle-panel {
+				position: absolute;
 				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
+				left: -16px;
+				transform: translateY(-50%);
+
+				width: 16px;
+				height: 40px;
+				background-color: lightcoral;
+				opacity: 0.4;
+
+				color: white;
+				display: flex;
+				flex-wrap: wrap;
+				align-content: center;
+				justify-content: center;
+
+				border-radius: 5px 0 0 5px;
+			}
+			#toggle-panel:hover {
+				opacity: 1;
+			}
+
+			#hdb_target {
+				padding: 10px;
 			}
 		</style>
 	</head>
 	<body>
-		<canvas id="shadowing"></canvas>
-		<canvas id="main"></canvas>
-		<section id="hdb_target"></section>
+		<section></section>
+		<section id="canvas-container" class="panel-opened" data-toggleable="panel">
+			<canvas id="shadowing"></canvas>
+			<canvas id="main"></canvas>
+		</section>
+
+		<section id="panel-wrapper" class="panel-opened" data-toggleable="panel">
+			<div id="hdb_target"></div>
+			<div id="toggle-panel" data-status="opened">
+				<i class="fa-solid fa-lg fa-ellipsis-vertical"></i>
+			</div>
+		</section>
 	</body>
+
+	<script>
+		const togglePanel = document.getElementById('toggle-panel');
+		togglePanel.addEventListener('click', () => {
+			if (togglePanel.dataset.status === 'opened') {
+				togglePanel.dataset.status = 'closed';
+
+				document.querySelectorAll('section[data-toggleable="panel"]').forEach((elem) => {
+					elem.classList = '';
+				});
+			} else {
+				togglePanel.dataset.status = 'opened';
+
+				document.querySelectorAll('section[data-toggleable="panel"]').forEach((elem) => {
+					elem.classList = 'panel-opened';
+				});
+			}
+		});
+	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 	<script id="hdb_source" type="text/x-handlebars-template">
