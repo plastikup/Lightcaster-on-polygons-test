@@ -1,4 +1,14 @@
 'use strict';
+
+const hdb_target = document.getElementById('hdb_target');
+const hdb_source = document.getElementById('hdb_source').innerHTML;
+function compileHandlebars() {
+	// eslint-disable-next-line no-undef
+	const hdb_compiler = Handlebars.compile(hdb_source);
+	hdb_target.innerHTML = hdb_compiler({ number: 7 });
+}
+
+/* ctx initialization */
 const mainCanvas = document.getElementById('main');
 const shadowingCanvas = document.getElementById('shadowing');
 
@@ -19,7 +29,7 @@ const mainCtx = mainCanvas.getContext('2d');
 mainCtx.scale(canvasScaleFactor, canvasScaleFactor);
 mainCtx.lineWidth = canvasSize / 400;
 
-const shadowingCtx = shadowingCanvas.getContext('2d');
+const shadowingCtx = shadowingCanvas.getContext('2d', { alpha: false });
 shadowingCtx.scale(canvasScaleFactor, canvasScaleFactor);
 shadowingCtx.lineWidth = canvasSize / 400;
 
@@ -82,15 +92,13 @@ class RandomPolygon {
 	}
 
 	draw() {
-		for (const vertex of this.vertexes) {
-			vertex.shadow();
-		}
-
 		mainCtx.strokeStyle = '#ddf';
 		mainCtx.beginPath();
 		mainCtx.moveTo(this.vertexes[this.vertexes.length - 1].x, this.vertexes[this.vertexes.length - 1].y);
 		for (const vertex of this.vertexes) {
 			mainCtx.lineTo(vertex.x, vertex.y);
+			// shadowing
+			vertex.shadow();
 		}
 		mainCtx.stroke();
 	}
@@ -346,7 +354,7 @@ class RandomBall {
 	}
 
 	draw() {
-		mainCtx.fillStyle = '#ff0';
+		mainCtx.fillStyle = '#ff9';
 		mainCtx.beginPath();
 		mainCtx.arc(this.x, this.y, 4, 0, 2 * Math.PI);
 		mainCtx.fill();
