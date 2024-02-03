@@ -21,7 +21,7 @@ compileHandlebars();
 const mainCanvas = document.getElementById('main');
 const shadowingCanvas = document.getElementById('shadowing');
 
-const canvasSize = Math.min(innerWidth, innerHeight) - 16;
+const canvasSize = Math.min(innerWidth, innerHeight) - 32;
 const canvasCenter = canvasSize / 2;
 const canvasScaleFactor = 2;
 

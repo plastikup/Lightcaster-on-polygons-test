@@ -42,12 +42,12 @@
 			#canvas-container {
 				position: relative;
 
-				width: calc(100vmin - 16px);
-				height: calc(100vmin - 16px);
+				width: calc(100vmin - 32px);
+				height: calc(100vmin - 32px);
 			}
 			#canvas-container.panel-opened {
-				width: calc(min(100vw - 250px - 16px, 100vh - 16px)) !important;
-				height: calc(min(100vw - 250px - 16px, 100vh - 16px)) !important;
+				width: calc(min(100vw - 250px - 32px, 100vh - 32px)) !important;
+				height: calc(min(100vw - 250px - 32px, 100vh - 32px)) !important;
 			}
 
 			/* right panel */
@@ -57,6 +57,7 @@
 				width: 0px;
 				height: 90vh;
 				border-radius: 15px 0 0 15px;
+				opacity: 0.8;
 
 				background: linear-gradient(150deg, lightcoral, 80%, cornflowerblue);
 			}
@@ -66,10 +67,10 @@
 			#toggle-panel {
 				position: absolute;
 				top: 50%;
-				left: -16px;
+				left: -12px;
 				transform: translateY(-50%);
 
-				width: 16px;
+				width: 12px;
 				height: 40px;
 				background-color: lightcoral;
 				opacity: 0.4;
