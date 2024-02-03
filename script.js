@@ -4,12 +4,14 @@
 /* ~~~ HANDLEBARS.JS ~~~ */
 /* ~~~~~~~~~~~~~~~~~~~~~ */
 
+/* global Handlebars:readonly */
 const hdb_target = document.getElementById('hdb_target');
 const hdb_source = document.getElementById('hdb_source').innerHTML;
 function compileHandlebars() {
-	// eslint-disable-next-line no-undef
 	const hdb_compiler = Handlebars.compile(hdb_source);
-	hdb_target.innerHTML = hdb_compiler({ number: 7 });
+	hdb_target.innerHTML = hdb_compiler({
+		isMobile: window.matchMedia('(any-hover: none)').matches,
+	});
 }
 compileHandlebars();
 
