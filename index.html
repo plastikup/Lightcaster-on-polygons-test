@@ -143,18 +143,23 @@
 				document.querySelectorAll('section[data-toggleable="panel"]').forEach((elem) => {
 					elem.classList = '';
 				});
+
+				document.getElementById('hdb_target').style.display = 'none';
 			} else {
 				togglePanel.dataset.status = 'opened';
 
 				document.querySelectorAll('section[data-toggleable="panel"]').forEach((elem) => {
 					elem.classList = 'panel-opened';
 				});
+
+				document.getElementById('hdb_target').style.display = 'block';
 			}
 		});
 	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 	<script id="hdb_source" type="text/x-handlebars-template">
+		<h2>Lightcaster on polygons</h2>
 		<p>display {{number}}</p>
 	</script>
 
