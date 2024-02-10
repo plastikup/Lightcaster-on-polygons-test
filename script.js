@@ -364,14 +364,14 @@ class RandomBall {
 
 		// a random moving angle
 		const randomAngle = Math.random() * 2 * Math.PI;
-		this.vx = Math.cos(randomAngle);
-		this.vy = Math.sin(randomAngle);
+		this.vx = 2 * Math.cos(randomAngle);
+		this.vy = 2 * Math.sin(randomAngle);
 	}
 
 	draw() {
 		mainCtx.fillStyle = '#ff0';
 		mainCtx.beginPath();
-		mainCtx.arc(this.x, this.y, 4, 0, 2 * Math.PI);
+		mainCtx.arc(this.x, this.y, 8, 0, 2 * Math.PI);
 		mainCtx.fill();
 	}
 
@@ -393,17 +393,17 @@ class RandomBall {
 			for (const vertex of poly.vertexes) {
 				const x1 = vertex.x;
 				const y1 = vertex.y;
-				if (Math.sqrt((x1 - this.x) ** 2 + (y1 - this.y) ** 2) < 4) {
+				if (Math.sqrt((x1 - this.x) ** 2 + (y1 - this.y) ** 2) < 8) {
 					// vertex-ball collision
 					const surfaceAngle = Math.atan2(this.y - y1, this.x - x1) + Math.PI / 2;
 					const incidentAngle = Math.atan2(this.vy, this.vx);
 					const resultingAngle = surfaceAngle * 2 - incidentAngle;
 
-					this.vx = Math.cos(resultingAngle);
-					this.vy = Math.sin(resultingAngle);
+					this.vx = 2 * Math.cos(resultingAngle);
+					this.vy = 2 * Math.sin(resultingAngle);
 
-					this.x = x1 + 4 * Math.cos(surfaceAngle - Math.PI / 2);
-					this.y = y1 + 4 * Math.sin(surfaceAngle - Math.PI / 2);
+					this.x = x1 + 8 * Math.cos(surfaceAngle - Math.PI / 2);
+					this.y = y1 + 8 * Math.sin(surfaceAngle - Math.PI / 2);
 				} else {
 					// segment-ball collision
 					const x2 = vertex.tree.nextChild.x;
@@ -420,17 +420,17 @@ class RandomBall {
 					// skip if closest point is outside the boundary of line segment
 					if (Math.sign(closestX - x1) === Math.sign(closestX - x2) || Math.sign(closestY - y1) === Math.sign(closestY - y2)) continue;
 					// check if the distance to the closest point is under the radius of the ball
-					if (Math.sqrt((closestX - this.x) ** 2 + (closestY - this.y) ** 2) < 4) {
+					if (Math.sqrt((closestX - this.x) ** 2 + (closestY - this.y) ** 2) < 8) {
 						const surfaceAngle = Math.atan2(y2 - y1, x2 - x1);
 						const incidentAngle = Math.atan2(this.vy, this.vx);
 						const resultingAngle = surfaceAngle * 2 - incidentAngle;
 
-						this.vx = Math.cos(resultingAngle);
-						this.vy = Math.sin(resultingAngle);
+						this.vx = 2 * Math.cos(resultingAngle);
+						this.vy = 2 * Math.sin(resultingAngle);
 
 						const a = Math.atan2(this.y - closestY, this.x - closestX);
-						this.x = closestX + 4 * Math.cos(a);
-						this.y = closestY + 4 * Math.sin(a);
+						this.x = closestX + 8 * Math.cos(a);
+						this.y = closestY + 8 * Math.sin(a);
 					}
 				}
 			}
