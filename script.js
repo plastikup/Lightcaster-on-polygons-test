@@ -1,24 +1,5 @@
 'use strict';
 
-/* ~~~~~~~~~~~~~~~~~~~~~ */
-/* ~~~ HANDLEBARS.JS ~~~ */
-/* ~~~~~~~~~~~~~~~~~~~~~ */
-
-/* global Handlebars:readonly */
-const hdb_target = document.getElementById('hdb_target');
-const hdb_source = document.getElementById('hdb_source').innerHTML;
-function compileHandlebars() {
-	const hdb_compiler = Handlebars.compile(hdb_source);
-	hdb_target.innerHTML = hdb_compiler({
-		isMobile: window.matchMedia('(any-hover: none)').matches,
-	});
-}
-compileHandlebars();
-
-/* ~~~~~~~~~~~~~~~~~~~~~~ */
-/* ~~~~~~~ CANVAS ~~~~~~~ */
-/* ~~~~~~~~~~~~~~~~~~~~~~ */
-
 /* ctx initialization */
 const mainCanvas = document.getElementById('main');
 const shadowingCanvas = document.getElementById('shadowing');
@@ -67,7 +48,7 @@ function drawMouse() {
 	mainCtx.fill();
 
 	const light = shadowingCtx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
-	light.addColorStop(0, '#990');
+	light.addColorStop(0, 'hsl(60, 100%, 40%)');
 	light.addColorStop(1, '#000');
 	shadowingCtx.fillStyle = light;
 	shadowingCtx.arc(...mouse, canvasSize, 0, 2 * Math.PI);
@@ -383,9 +364,8 @@ class RandomBall {
 		if (Math.abs(this.x - canvasCenter) > canvasCenter || Math.abs(this.y - canvasCenter) > canvasCenter) {
 			ballList.splice(ballList.indexOf(this), 1);
 		}
-	}
 
-	collide() {
+		// collisions
 		for (const poly of polygonList) {
 			// skip if polygon is too far
 			if (Math.sqrt((poly.x - this.x) ** 2 + (poly.y - this.y) ** 2) > canvasSize / 10) continue;
@@ -440,23 +420,34 @@ class RandomBall {
 
 function main() {
 	mainCtx.clearRect(0, 0, canvasSize, canvasSize);
-	polygonGridded = deepCopyPolygonGridded();
 
-	if (polygonList.length < 20) {
-		polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
+	// cursor
+	drawMouse();
+
+	// playback
+	for (let i = 0; i < 1; i++) {
+		polygonGridded = deepCopyPolygonGridded();
+		for (const poly of polygonList) {
+			poly.update();
+		}
+		for (const ball of ballList) {
+			ball.update();
+		}
 	}
 
-	drawMouse();
+	// draw
 	for (const poly of polygonList) {
 		poly.draw();
-		poly.update();
 	}
 	for (const ball of ballList) {
 		ball.draw();
-		ball.update();
-		ball.collide();
 	}
 
+	// call again
 	requestAnimationFrame(main);
+}
+
+for (let i = 0; i < 20; i++) {
+	polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
 }
 main();

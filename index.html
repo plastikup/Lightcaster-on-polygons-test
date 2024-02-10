@@ -33,6 +33,9 @@
 				flex-wrap: nowrap;
 				justify-content: space-between;
 			}
+			p {
+				text-align: justify;
+			}
 			i::before {
 				text-shadow: none;
 			}
@@ -101,7 +104,7 @@
 				opacity: 1;
 			}
 
-			#hdb_target {
+			#panel-body {
 				padding: 10px;
 			}
 
@@ -135,41 +138,26 @@
 		</section>
 
 		<section id="panel-wrapper" class="panel-opened" data-toggleable="panel">
-			<div id="hdb_target"></div>
+			<div id="panel-body">
+				<h1>Lightcaster on polygons</h1>
+				<p>This project simulates light in a sandbox full of randomly-generated polygons. Move around your mouse to change the lighting, and left click to add balls (sus). You may also adjust the game settings with the sliders below. Have fun!</p>
+				<ul>
+					<li>
+						<div><span>playback speed: </span><span>1</span><span>x</span></div>
+						<input type="range" min="1" max="3" value="1" id="" />
+					</li>
+					<li>
+						<div><span>light color: hue </span><span>60</span></div>
+						<input type="range" min="0" max="359" value="60" id="" />
+					</li>
+				</ul>
+			</div>
 			<div id="toggle-panel" data-status="opened">
 				<i class="fa-solid fa-lg fa-ellipsis-vertical"></i>
 			</div>
 		</section>
 	</body>
 
-	<script>
-		const togglePanel = document.getElementById('toggle-panel');
-		togglePanel.addEventListener('click', () => {
-			if (togglePanel.dataset.status === 'opened') {
-				togglePanel.dataset.status = 'closed';
-
-				document.querySelectorAll('section[data-toggleable="panel"]').forEach((elem) => {
-					elem.classList = '';
-				});
-
-				document.getElementById('hdb_target').style.display = 'none';
-			} else {
-				togglePanel.dataset.status = 'opened';
-
-				document.querySelectorAll('section[data-toggleable="panel"]').forEach((elem) => {
-					elem.classList = 'panel-opened';
-				});
-
-				document.getElementById('hdb_target').style.display = 'block';
-			}
-		});
-	</script>
-
-	<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-	<script id="hdb_source" type="text/x-handlebars-template">
-		<h1>Lightcaster on polygons</h1>
-		<p>This project simulates light in a sandbox full of randomly-generated polygons. Move around your {{#if isMobile}} finger {{else}} mouse {{/if}} to change the lighting, and {{#if isMobile}} tap on your screen {{else}} left click {{/if}} to add balls. You may also adjust the game settings with the sliders below. Have fun!</p>
-	</script>
-
 	<script src="./script.js"></script>
+	<script src="./user-interactions.js"></script>
 </html>
