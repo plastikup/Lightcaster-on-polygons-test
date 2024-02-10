@@ -63,7 +63,7 @@ document.addEventListener('pointerdown', (event) => {
 function drawMouse() {
 	mainCtx.fillStyle = '#fff';
 	mainCtx.beginPath();
-	mainCtx.arc(...mouse, 4, 0, 2 * Math.PI);
+	mainCtx.arc(...mouse, 8, 0, 2 * Math.PI);
 	mainCtx.fill();
 
 	const light = shadowingCtx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
