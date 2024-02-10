@@ -22,6 +22,10 @@ shadowingCtx.scale(canvasScaleFactor, canvasScaleFactor);
 shadowingCtx.lineWidth = canvasSize / 400;
 
 /* start of script */
+window.interactables = {
+	playbackSpeed: 1,
+	lightColor: 60,
+};
 const mouse = [canvasCenter, canvasCenter];
 function saveMousePosition(event) {
 	mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
@@ -48,7 +52,7 @@ function drawMouse() {
 	mainCtx.fill();
 
 	const light = shadowingCtx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
-	light.addColorStop(0, 'hsl(60, 100%, 40%)');
+	light.addColorStop(0, `hsl(${window.interactables.lightColor}, 100%, 40%)`);
 	light.addColorStop(1, '#000');
 	shadowingCtx.fillStyle = light;
 	shadowingCtx.arc(...mouse, canvasSize, 0, 2 * Math.PI);
@@ -425,7 +429,7 @@ function main() {
 	drawMouse();
 
 	// playback
-	for (let i = 0; i < 1; i++) {
+	for (let i = 0; i < window.interactables.playbackSpeed; i++) {
 		polygonGridded = deepCopyPolygonGridded();
 		for (const poly of polygonList) {
 			poly.update();

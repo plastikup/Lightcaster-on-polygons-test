@@ -132,23 +132,23 @@
 	</head>
 	<body>
 		<section id="spatial-separator"></section>
-		<section id="canvas-container" class="panel-opened" data-toggleable="panel">
+		<section id="canvas-container" class="panel-opened" data-type="panel-reactive">
 			<canvas id="shadowing"></canvas>
 			<canvas id="main"></canvas>
 		</section>
 
-		<section id="panel-wrapper" class="panel-opened" data-toggleable="panel">
+		<section id="panel-wrapper" class="panel-opened" data-type="panel-reactive">
 			<div id="panel-body">
 				<h1>Lightcaster on polygons</h1>
 				<p>This project simulates light in a sandbox full of randomly-generated polygons. Move around your mouse to change the lighting, and left click to add balls (sus). You may also adjust the game settings with the sliders below. Have fun!</p>
 				<ul>
 					<li>
-						<div><span>playback speed: </span><span>1</span><span>x</span></div>
-						<input type="range" min="1" max="3" value="1" id="" />
+						<div><span>playback speed: </span><span data-type="slider-input">1</span><span>x</span></div>
+						<input type="range" min="1" max="3" value="1" data-varname="playbackSpeed" />
 					</li>
 					<li>
-						<div><span>light color: hue </span><span>60</span></div>
-						<input type="range" min="0" max="359" value="60" id="" />
+						<div><span>light color: hue </span><span data-type="slider-input">60</span></div>
+						<input type="range" min="0" max="359" value="60" data-varname="lightColor" />
 					</li>
 				</ul>
 			</div>
