@@ -25,7 +25,9 @@ shadowingCtx.lineWidth = canvasSize / 400;
 window.interactables = {
 	playbackSpeed: 1,
 	lightColor: 60,
+	ballSize: 8,
 };
+
 const mouse = [canvasCenter, canvasCenter];
 function saveMousePosition(event) {
 	mouse[0] = event.offsetX * (canvasSize / parseInt(mainCanvas.offsetWidth, 10));
@@ -48,7 +50,7 @@ document.addEventListener('pointerdown', (event) => {
 function drawMouse() {
 	mainCtx.fillStyle = '#fff';
 	mainCtx.beginPath();
-	mainCtx.arc(...mouse, 8, 0, 2 * Math.PI);
+	mainCtx.arc(...mouse, window.interactables.ballSize, 0, 2 * Math.PI);
 	mainCtx.fill();
 
 	const light = shadowingCtx.createRadialGradient(...mouse, 0, ...mouse, canvasSize);
@@ -356,7 +358,7 @@ class RandomBall {
 	draw() {
 		mainCtx.fillStyle = '#ff0';
 		mainCtx.beginPath();
-		mainCtx.arc(this.x, this.y, 8, 0, 2 * Math.PI);
+		mainCtx.arc(this.x, this.y, window.interactables.ballSize, 0, 2 * Math.PI);
 		mainCtx.fill();
 	}
 
@@ -377,7 +379,7 @@ class RandomBall {
 			for (const vertex of poly.vertexes) {
 				const x1 = vertex.x;
 				const y1 = vertex.y;
-				if (Math.sqrt((x1 - this.x) ** 2 + (y1 - this.y) ** 2) < 8) {
+				if (Math.sqrt((x1 - this.x) ** 2 + (y1 - this.y) ** 2) < window.interactables.ballSize) {
 					// vertex-ball collision
 					const surfaceAngle = Math.atan2(this.y - y1, this.x - x1) + Math.PI / 2;
 					const incidentAngle = Math.atan2(this.vy, this.vx);
@@ -386,8 +388,8 @@ class RandomBall {
 					this.vx = 2 * Math.cos(resultingAngle);
 					this.vy = 2 * Math.sin(resultingAngle);
 
-					this.x = x1 + 8 * Math.cos(surfaceAngle - Math.PI / 2);
-					this.y = y1 + 8 * Math.sin(surfaceAngle - Math.PI / 2);
+					this.x = x1 + window.interactables.ballSize * Math.cos(surfaceAngle - Math.PI / 2);
+					this.y = y1 + window.interactables.ballSize * Math.sin(surfaceAngle - Math.PI / 2);
 				} else {
 					// segment-ball collision
 					const x2 = vertex.tree.nextChild.x;
@@ -404,7 +406,7 @@ class RandomBall {
 					// skip if closest point is outside the boundary of line segment
 					if (Math.sign(closestX - x1) === Math.sign(closestX - x2) || Math.sign(closestY - y1) === Math.sign(closestY - y2)) continue;
 					// check if the distance to the closest point is under the radius of the ball
-					if (Math.sqrt((closestX - this.x) ** 2 + (closestY - this.y) ** 2) < 8) {
+					if (Math.sqrt((closestX - this.x) ** 2 + (closestY - this.y) ** 2) < window.interactables.ballSize) {
 						const surfaceAngle = Math.atan2(y2 - y1, x2 - x1);
 						const incidentAngle = Math.atan2(this.vy, this.vx);
 						const resultingAngle = surfaceAngle * 2 - incidentAngle;
@@ -413,8 +415,8 @@ class RandomBall {
 						this.vy = 2 * Math.sin(resultingAngle);
 
 						const a = Math.atan2(this.y - closestY, this.x - closestX);
-						this.x = closestX + 8 * Math.cos(a);
-						this.y = closestY + 8 * Math.sin(a);
+						this.x = closestX + window.interactables.ballSize * Math.cos(a);
+						this.y = closestY + window.interactables.ballSize * Math.sin(a);
 					}
 				}
 			}
