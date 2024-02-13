@@ -374,7 +374,7 @@ class RandomBall {
 		// collisions
 		for (const poly of polygonList) {
 			// skip if polygon is too far
-			if (Math.sqrt((poly.x - this.x) ** 2 + (poly.y - this.y) ** 2) > canvasSize / 16 + window.interactables.ballSize * 2) continue;
+			if (Math.sqrt((poly.x - this.x) ** 2 + (poly.y - this.y) ** 2) > canvasSize / 10 + window.interactables.ballSize * 2) continue;
 
 			for (const vertex of poly.vertexes) {
 				const x1 = vertex.x;
