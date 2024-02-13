@@ -21,16 +21,12 @@ togglePanel.addEventListener('click', () => {
 });
 
 // user interactivity
-const allSliders = [...document.getElementsByTagName('input')];
-allSliders.forEach(() => {
-	document.addEventListener('input', handleOnSliderInput);
-});
-function handleOnSliderInput(event) {
+document.addEventListener('input', (event) => {
 	// save the new value in a variable
 	const newValue = event.target.value;
 	// display the new value
 	const targetDOM = event.target.previousElementSibling.querySelector('span[data-type="slider-input"]');
 	targetDOM.innerHTML = newValue;
-    // update the global variable
-    window.interactables[event.target.dataset.varname] = newValue;
-}
+	// update the global variable
+	window.interactables[event.target.dataset.varname] = newValue;
+});
