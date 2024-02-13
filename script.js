@@ -356,7 +356,7 @@ class RandomBall {
 	}
 
 	draw() {
-		mainCtx.fillStyle = '#ff0';
+		mainCtx.fillStyle = `hsl(${window.interactables.lightColor}, 100%, 60%)`;
 		mainCtx.beginPath();
 		mainCtx.arc(this.x, this.y, window.interactables.ballSize, 0, 2 * Math.PI);
 		mainCtx.fill();
