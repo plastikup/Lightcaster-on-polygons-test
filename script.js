@@ -81,6 +81,9 @@ class RandomPolygon {
 		this.ma = Math.random() * 0.008 - 0.004;
 		this.polygonId = RandomPolygon.idCount++;
 
+		// sounds
+		this.lastSoundMS = 0;
+
 		// children tree
 		this.vertexes = [];
 		const maxVertexes = Math.floor(Math.random() * 3) + 3; // 3 to 5 vertexes
@@ -219,6 +222,20 @@ class RandomPolygon {
 				this.y += halfDistance * Math.sin(angleToOtherVertex);
 				randomPolygon.x += halfDistance * Math.cos(angleToOtherVertex + Math.PI);
 				randomPolygon.y += halfDistance * Math.sin(angleToOtherVertex + Math.PI);
+			}
+
+			// "immersive" (kinda) synth music that occurs when polygons collide
+			if (Date.now() - this.lastSoundMS > 1000) {
+				this.lastSoundMS = Date.now();
+				try {
+					if (Math.random() < 5){
+						window.playChoir();
+					} else {
+						window.playSynth();
+					}
+				} catch (error) {
+					console.warn(error);
+				}
 			}
 		}
 	}

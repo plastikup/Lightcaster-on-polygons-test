@@ -162,6 +162,22 @@
 		</section>
 	</body>
 
+	<script src="https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js"></script>
+	<script src="https://surikov.github.io/webaudiofontdata/sound/0900_FluidR3_GM_sf2_file.js"></script>
+	<script src="https://surikov.github.io/webaudiofontdata/sound/0910_FluidR3_GM_sf2_file.js"></script>
+	<script type="module">
+		const AudioContextFunc = window.AudioContext || window.webkitAudioContext;
+		const audioContext = new AudioContextFunc();
+		const player = new WebAudioFontPlayer();
+		player.loader.decodeAfterLoading(audioContext, '_tone_0900_FluidR3_GM_sf2_file');
+		window.playSynth = () => {
+			player.queueWaveTable(audioContext, audioContext.destination, _tone_0900_FluidR3_GM_sf2_file, 0, [0, 2, 4, 5, 7, 9, 11][Math.floor(Math.random() * 7)] + 60, 5);
+		};
+		window.playChoir = () => {
+			player.queueWaveTable(audioContext, audioContext.destination, _tone_0910_FluidR3_GM_sf2_file, 0, [0, 2, 4, 5, 7, 9, 11][Math.floor(Math.random() * 7)] + 60, 5);
+		};
+	</script>
+
 	<script src="./script.js"></script>
 	<script src="./user-interactions.js"></script>
 </html>
