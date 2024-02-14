@@ -59,6 +59,9 @@
 
 				z-index: 10;
 			}
+			#volume-up-icon::before {
+				text-shadow: unset !important;
+			}
 			.blink {
 				animation: blink 1s infinite;
 			}
@@ -166,7 +169,7 @@
 	</head>
 	<body>
 		<div id="volume-up-screen">
-			<i class="fas fa-volume-up fa-5x"></i>
+			<i id="volume-up-icon" class="fas fa-volume-up fa-5x"></i>
 			<p style="font-size: 2rem">turn up your volume! enjoy!</p>
 			<p class="blink" style="font-size: 1.5rem">tap to continue</p>
 		</div>
@@ -209,10 +212,13 @@
 	<script src="https://surikov.github.io/webaudiofontdata/sound/0900_FluidR3_GM_sf2_file.js"></script>
 	<script src="https://surikov.github.io/webaudiofontdata/sound/0910_FluidR3_GM_sf2_file.js"></script>
 	<script type="module">
+		// MIDI module using webaudiofont on github: https://github.com/surikov/webaudiofont
 		const AudioContextFunc = window.AudioContext || window.webkitAudioContext;
 		const audioContext = new AudioContextFunc();
 		const player = new WebAudioFontPlayer();
 		player.loader.decodeAfterLoading(audioContext, '_tone_0900_FluidR3_GM_sf2_file');
+		player.loader.decodeAfterLoading(audioContext, '_tone_0910_FluidR3_GM_sf2_file');
+
 		window.playSynth = () => {
 			player.queueWaveTable(audioContext, audioContext.destination, _tone_0900_FluidR3_GM_sf2_file, 0, [0, 2, 4, 5, 7, 9, 11][Math.floor(Math.random() * 7)] + 60, 5);
 		};

@@ -65,7 +65,6 @@ function drawMouse() {
 const polygonGriddedOriginal = Object.fromEntries([...Array(12)].map(() => Object.fromEntries([...Array(12)].map(() => []).map((value, index) => [index - 1, value]))).map((value, index) => [index - 1, value]));
 const deepCopyPolygonGridded = () => JSON.parse(JSON.stringify(polygonGriddedOriginal));
 let polygonGridded = deepCopyPolygonGridded();
-console.log(polygonGridded);
 
 let polygonList = [];
 class RandomPolygon {
@@ -480,9 +479,4 @@ function main() {
 	requestAnimationFrame(main);
 }
 
-/*
-for (let i = 0; i < 20; i++) {
-	polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
-}
-*/
 main();
