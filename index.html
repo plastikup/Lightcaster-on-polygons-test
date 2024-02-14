@@ -20,9 +20,9 @@
 			body {
 				margin: 0;
 				overflow: hidden;
-				background-color: black;
+				background: linear-gradient(20deg, darkslateblue, darkslategray);
 
-				font-size: 16px;
+				font-size: 18px;
 				font-family: 'Protest Riot', sans-serif;
 				color: #ddd;
 				text-shadow: 2px 2px 2px cornflowerblue;
@@ -38,6 +38,40 @@
 			}
 			i::before {
 				text-shadow: none;
+			}
+
+			/* volume up screen */
+			#volume-up-screen {
+				position: absolute;
+				top: 0%;
+				left: 0%;
+				width: 100vw;
+				height: 100vh;
+
+				background-color: #0009;
+
+				display: flex;
+				flex-wrap: wrap;
+				align-content: center;
+				justify-content: center;
+				flex-direction: column;
+				align-items: center;
+
+				z-index: 10;
+			}
+			.blink {
+				animation: blink 1s infinite;
+			}
+			@keyframes blink {
+				0% {
+					opacity: 0.2;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0.2;
+				}
 			}
 
 			/* canvas */
@@ -131,6 +165,11 @@
 		</style>
 	</head>
 	<body>
+		<div id="volume-up-screen">
+			<i class="fas fa-volume-up fa-5x"></i>
+			<p style="font-size: 2rem">turn up your volume! enjoy!</p>
+			<p class="blink" style="font-size: 1.5rem">tap to continue</p>
+		</div>
 		<section id="spatial-separator"></section>
 		<section id="canvas-container" class="panel-opened" data-type="panel-reactive">
 			<canvas id="shadowing"></canvas>

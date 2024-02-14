@@ -1,3 +1,16 @@
+// close intro screen
+const introScreen = document.getElementById('volume-up-screen');
+introScreen.addEventListener('click', closeIntroScreen);
+function closeIntroScreen(){
+	// hide with css inherit transition duration
+	introScreen.style.opacity = 0;
+	introScreen.removeEventListener('click', closeIntroScreen);
+	// delete element after transition
+	setTimeout(() => {
+		introScreen.remove();
+	}, 100);
+}
+
 // open/close the right panel
 const togglePanel = document.getElementById('toggle-panel');
 togglePanel.addEventListener('click', () => {
