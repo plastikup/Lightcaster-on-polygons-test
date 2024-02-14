@@ -28,5 +28,5 @@ document.addEventListener('input', (event) => {
 	const targetDOM = event.target.previousElementSibling.querySelector('span[data-type="slider-input"]');
 	targetDOM.innerHTML = newValue;
 	// update the global variable
-	window.interactables[event.target.dataset.varname] = newValue;
+	window.interactables[event.target.dataset.varname] = +newValue;
 });

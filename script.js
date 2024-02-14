@@ -26,6 +26,7 @@ window.interactables = {
 	playbackSpeed: 1,
 	lightColor: 60,
 	ballSize: 8,
+	nbOfPoly: 20,
 };
 
 const mouse = [canvasCenter, canvasCenter];
@@ -228,7 +229,7 @@ class RandomPolygon {
 			if (Date.now() - this.lastSoundMS > 1000) {
 				this.lastSoundMS = Date.now();
 				try {
-					if (Math.random() < 5){
+					if (Math.random() < 5) {
 						window.playChoir();
 					} else {
 						window.playSynth();
@@ -444,6 +445,15 @@ class RandomBall {
 function main() {
 	mainCtx.clearRect(0, 0, canvasSize, canvasSize);
 
+	// push new polygons
+	if (polygonList.length !== window.interactables.nbOfPoly) {
+		if (polygonList.length > window.interactables.nbOfPoly) {
+			polygonList.splice(window.interactables.nbOfPoly, polygonList.length - window.interactables.nbOfPoly);
+		} else {
+			polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
+		}
+	}
+
 	// cursor
 	drawMouse();
 
@@ -470,7 +480,9 @@ function main() {
 	requestAnimationFrame(main);
 }
 
+/*
 for (let i = 0; i < 20; i++) {
 	polygonList.push(new RandomPolygon(Math.random() * canvasSize, Math.random() * canvasSize));
 }
+*/
 main();
