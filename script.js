@@ -228,7 +228,7 @@ class RandomPolygon {
 			if (Date.now() - this.lastSoundMS > 1000) {
 				this.lastSoundMS = Date.now();
 				try {
-					if (Math.random() < 5) {
+					if (Math.random() < 0.5) {
 						window.playChoir();
 					} else {
 						window.playSynth();
